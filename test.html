@@ -3,18 +3,28 @@
 <head>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script>
-var lng = -122.293271
-var lat =  47.461273
+
 var results = [];
-    
-$(document).ready(function(){
-        $.ajax(
-        	{
-        		url: "https://maps.googleapis.com/maps/api/geocode/json?latlng=" + lat +','+ lng + "&key=AIzaSyAACxehLRBFpjiHZP5otjAbjIv7epZmmIg", success: function(result){
-        			results.push(result);       
-            		}
-            	});
-			});
-console.log(results)
+var geoData = [];
+
+var locationObjects = $.getJSON("locations.json", function(data) {
+	geoData =  data["locations"];
+		})
+		.done(function() {
+		for (var item in geoData) {
+			$.ajax(
+					{
+						url: "https://maps.googleapis.com/maps/api/geocode/json?latlng=" + parseFloat(geoData[item]["latitudeE7"])/1E7 +','+ parseFloat(geoData[item]["longitudeE7"])/1E7+ "&key=AIzaSyAACxehLRBFpjiHZP5otjAbjIv7epZmmIg",
+						success: function(result){
+							results.push(result);
+						}
+					});
+			}
+	});
+
+locationObjects.done(function() {
+	console.log(results)
+});
+
 </script>
 </head>
